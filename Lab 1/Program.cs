@@ -9,7 +9,7 @@ namespace Lab_1
         public Number()
         {   
             Random rnd = new Random();
-            int num2 = rnd.Next() + rnd.Next() * rnd.Next();
+            int num2 = Math.Abs(rnd.Next() + rnd.Next() * rnd.Next());
             _num1 = num2.ToString();
         }
         
@@ -62,11 +62,11 @@ namespace Lab_1
                 }
             }
 
-            for (int i = 0; i < num2.Length; i++)
+            for (int i = 0, j = 0; i < num2.Length-1; i++)
             {
-                for (int j = i + 1; j < num2.Length; j++)
+                for (j = 0; j < num2.Length; j++)
                 {
-                    if (_num1[i] == num2[j] && _num1[i] != num2[i])
+                    if (_num1[i] == num2[j] && _num1[i] != num2[i] && _num1[j] != num2[j])
                     {
                         Console.Write("K");
                     }
@@ -83,15 +83,15 @@ namespace Lab_1
         {
             Number num = new Number();
             string number;
-            Console.WriteLine("Try to guess a number");
+            Console.WriteLine("Try to guess the number");
             Console.WriteLine($"Length is {num.Get().Length}");
             do
             {
                 number = Console.ReadLine();
                 num.Check(number);
-            } while (!num.Guessed(number));
+            } while (!num.Guessed(number) && number != "fuck");
 
-            Console.Write("You win");
+            Console.Write(num.Get());
         }
     }
 }
