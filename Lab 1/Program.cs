@@ -1,97 +1,68 @@
 ﻿using System;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace Lab_1
 {
-    class Number
+    internal static class Check
     {
-        private string _num1;
-    
-        public Number()
-        {   
-            Random rnd = new Random();
-            int num2 = Math.Abs(rnd.Next() + rnd.Next() * rnd.Next());
-            _num1 = num2.ToString();
-        }
-        
-        public Number(int num2)
+        public static string Number(string item)
         {
-            _num1 = num2.ToString();
-        }
-
-        public Number(string num2)
-        {
-            _num1 = num2;
-        }
-
-        public string Get()
-        {
-            return _num1;
-        }
-
-        public bool Guessed(string num2)
-        {
-            for (int i = 0; i < num2.Length; i++)
-            {
-                if (_num1[i] != num2[i])
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-        
-        public void Check(string num2)
-        {
-            if (num2.Length > _num1.Length)
-            {
-                Console.WriteLine("Wrong length");
-                return;
-            }
-            
-            if (_num1 == num2)
-            {
-                Console.WriteLine("Yeah");
-                return;
-            }
-
-            for (int i = 0; i < num2.Length; i++)
-            {
-                if (_num1[i] == num2[i])
-                {
-                    Console.Write("B");
-                }
-            }
-
-            for (int i = 0, j = 0; i < num2.Length-1; i++)
-            {
-                for (j = 0; j < num2.Length; j++)
-                {
-                    if (_num1[i] == num2[j] && _num1[i] != num2[i] && _num1[j] != num2[j])
-                    {
-                        Console.Write("K");
-                    }
-                }
-            }
-
-            Console.WriteLine();
+            if (item.All(i => i <= '9' && i >= '0')) return item;
+            Console.WriteLine("It is not a number");
+            return "0";
         }
     }
 
-    static class Program
+    internal static class Compare
     {
-        static void Main()
+        public static bool Strings(string first, string second)
         {
-            Number num = new Number();
-            string number;
-            Console.WriteLine("Try to guess the number");
-            Console.WriteLine($"Length is {num.Get().Length}");
-            do
+            if (first.Length != second.Length)
             {
-                number = Console.ReadLine();
-                num.Check(number);
-            } while (!num.Guessed(number) && number != "fuck");
+                Console.WriteLine($"Wrong length, current length is {first.Length}");
+                return false;
+            }
 
-            Console.Write(num.Get());
+            var matchingNumbers = new List<char>();
+
+            for (var i = 0; i < first.Length; i++)
+            {
+                if (matchingNumbers.Any(j => j == first[i]) || first[i] != second[i]) continue;
+                matchingNumbers.Add(first[i]);
+                Console.Write('B');
+            }
+
+            foreach (var i in first.Where(i => second.Any(j => j == i)))
+            {
+                if (matchingNumbers.Any(j => j == i)) continue;
+                matchingNumbers.Add(i);
+                Console.Write('K');
+            }
+
+            Console.WriteLine();
+
+            return first == second;
+        }
+    }
+
+    internal static class Program
+    {
+        public static void Main()
+        {
+            var random = new Random();
+            Console.WriteLine("Choose difficulty level");
+            var number = new char[Convert.ToInt32(Check.Number(Console.ReadLine()))];
+
+            for (var i = 0; i < number.Length; i++) number[i] = Convert.ToChar(random.Next() % 10 + '0');
+
+            var super = new string(number);
+
+            Console.WriteLine("Try to guess the number");
+            var counter = 0;
+            while (!Compare.Strings(super, Check.Number(Console.ReadLine()))) counter++;
+
+            Console.WriteLine($"You guessed the number in {counter} tries");
         }
     }
 }
